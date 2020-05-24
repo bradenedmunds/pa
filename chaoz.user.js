@@ -157,7 +157,7 @@
             var rand = Math.floor((Math.random() * 9999999999) + 1000000000);
             $j('#menu_alliance').append('<ul>' +
                                         '<li><a href="alliance_fund.pl?rn=' + rand + '">Fund</a></li>' +
-                                        '<li><a href="https://chaozhq.org/att/">Attacks</a></li>' +
+                                        '<li><a href="https://chaozhq.org/att/" target="_blank">Attacks</a></li>' +
                                         '<li><a href="alliance_defence.pl?rn=' + rand + '">Defence</a></li>' +
                                         '<li><a href="alliance_fleets.pl?rn=' + rand + '">Fleets</a></li>' +
                                         '<li><a href="alliance_scans.pl?rn=' + rand + '">Scans</a></li>' +
