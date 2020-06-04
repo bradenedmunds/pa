@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Chaoz Script
 // @namespace    http://tampermonkey.net/
-// @version      1.0
+// @version      1.0.1
 // @description  Chaoz TM Script
 // @author       You
 // @match        https://*.planetarion.com/*
@@ -30,6 +30,11 @@
         var page = '';
         var view = '';
         var tick = 0;
+        var minReloadTime = 10; //Minimum time for auto reload, in seconds
+        var maxReloadTime = 120; //Minimum time for auto reload, in seconds
+        var autoScan = true; //Set false to stop auto scan on alliance_scans page
+        var autoReloadScanPage = true; //Set false to stop auto reload on alliance_scans page
+        var alrtScope;
         var globalDependencies = ['jQuery', 'get_cookie', 'get_ships_cookie', 'PA'];
 
 
@@ -79,6 +84,30 @@
             } else if(page == 'alliance_scans') {
                 var scns = ($j('a[target="wavescan"]').map((id, scn) => getScanId(scn.search))).toArray();
                 postScanLinks([... new Set(unique(scns))]);
+                if(autoScan) {
+                    //Override alert box, to avoid "hang" of auto reload
+                    if (typeof unsafeWindow === "undefined") {
+                        alrtScope = window;
+                    } else {
+                        alrtScope = unsafeWindow;
+                    }
+
+                    alrtScope.alert = function (str) {
+                        console.log ("Intercepted alert: ", str);
+                    };
+
+                    //Click each scan link
+                    $j.each($j('a[class^="link_"]'), function(ind, obj) {
+                        $j(this).click();
+                    });
+                }
+                if(autoReloadScanPage) {
+                    var rand = Math.floor(Math.random() * (Math.floor(maxReloadTime*1000) - Math.ceil(minReloadTime*1000) + 1)) + Math.ceil(minReloadTime*1000);
+                    setTimeout(function(){
+                        window.location.reload(1);
+                    }, rand);
+                    console.log('Auto reload in ' + Math.floor(rand/1000) + ' seconds.');
+                }
             }
 
             if(page == 'scan') {
