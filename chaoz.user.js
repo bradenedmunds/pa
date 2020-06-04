@@ -164,20 +164,20 @@
 
         function menu_updateMenu() {
             //Add Remaining Ticks
-            var rTicksDiv = doc.createElement("DIV");
-            rTicksDiv.id = 'header_remaining';
-            rTicksDiv.appendChild(doc.getElementById('header_tick').childNodes[0].cloneNode());
-            var rTicksLabel = doc.createElement('SPAN');
-            rTicksLabel.className = 'textlabel';
-            rTicksLabel.appendChild(doc.createTextNode("Remaining"));
-            rTicksDiv.appendChild(rTicksLabel);
-            rTicksDiv.appendChild(doc.getElementById('header_tick').childNodes[2].cloneNode());
-            var rTicksValue = doc.createElement('SPAN');
-            rTicksValue.className = 'textvalue';
-            rTicksValue.appendChild(doc.createTextNode(1177 - w.PA.last_tick));
-            rTicksDiv.appendChild(rTicksValue);
-            rTicksDiv.appendChild(doc.getElementById('header_tick').childNodes[4].cloneNode());
-            doc.getElementById('header').insertBefore(rTicksDiv, doc.getElementById('header_metal'));
+            // var rTicksDiv = doc.createElement("DIV");
+            // rTicksDiv.id = 'header_remaining';
+            // rTicksDiv.appendChild(doc.getElementById('header_tick').childNodes[0].cloneNode());
+            // var rTicksLabel = doc.createElement('SPAN');
+            // rTicksLabel.className = 'textlabel';
+            // rTicksLabel.appendChild(doc.createTextNode("Remaining"));
+            // rTicksDiv.appendChild(rTicksLabel);
+            // rTicksDiv.appendChild(doc.getElementById('header_tick').childNodes[2].cloneNode());
+            // var rTicksValue = doc.createElement('SPAN');
+            // rTicksValue.className = 'textvalue';
+            // rTicksValue.appendChild(doc.createTextNode(1177 - w.PA.last_tick));
+            // rTicksDiv.appendChild(rTicksValue);
+            // rTicksDiv.appendChild(doc.getElementById('header_tick').childNodes[4].cloneNode());
+            // doc.getElementById('header').insertBefore(rTicksDiv, doc.getElementById('header_metal'));
 
             //changeWaveLink
             $j('#menu_waves span.textlabel').text('Scans');
