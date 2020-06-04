@@ -190,6 +190,7 @@
                                         '<li><a href="alliance_defence.pl?rn=' + rand + '">Defence</a></li>' +
                                         '<li><a href="alliance_fleets.pl?rn=' + rand + '">Fleets</a></li>' +
                                         '<li><a href="alliance_scans.pl?rn=' + rand + '">Scans</a></li>' +
+                                        '<li><a href="alliance_scans.pl?rn=' + rand + '#tab2">Scan requests</a></li>' +
                                         '<li><a href="alliance_members.pl?rn=' + rand + '&order=cscore">Members</a></li>' +
                                         '</ul>');
         }
