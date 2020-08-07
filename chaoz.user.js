@@ -78,6 +78,7 @@
             } else if(page == 'alliance_scans') {
                 var scns = ($j('a[target="wavescan"]').map((id, scn) => getScanId(scn.search))).toArray();
                 postScanLinks([... new Set(unique(scns))]);
+                initAllianceScanRequests();
             }
 
             if(page == 'scan') {
@@ -116,6 +117,76 @@
                     fleets_addLocalTime();
                     //fleets_updateLauchTimes();
                 }
+            }
+        }
+        
+        function initAllianceScanRequests() {
+            try {
+                var xhr = new XMLHttpRequest();
+                xhr.open('GET', 'https://chaozhq.org/scans/requests', true);
+                xhr.withCredentials = true;
+                xhr.send();
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState == XMLHttpRequest.DONE) {
+                        var data = JSON.parse(xhr.responseText);console.log(data);
+                        $j('#tab2').prepend('<div class="container"><div class="header">Bot Scan Requests</div><div class="maintext"><table id="scans"><thead><th>Coords</th><th>Type</th><th>Dists</th><th></th></thead>');
+                        $j.each(data, function(index, request) {
+                            console.log(data[index]);
+                            var dists = data[index].dists || 'Unknown';
+                            var x = data[index].x;
+                            var y = data[index].y;
+                            var z = data[index].z;
+                            var type = data[index].scantype;
+                            $j('#scans').append('<tr><td class="center">' + x + ':' + y + ':' + z + '</td><td class="center">' + scanTypeToDisplay(type) + '</td><td>' + dists + '</td><td class="center"><button id="buttonscan' + index + '">Scan</button></td></tr>');
+                            $j('#buttonscan' + index).click({x:x, y:y, z:z, type:type}, attemptScan);
+                        });
+                        $j('#scans').append('</table></div><div class="footer"</div></div>');
+                    }
+                }
+            } catch(err) {
+            }
+        }
+
+        function attemptScan(data) {
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', 'https://game.planetarion.com/waves.pl', true);
+            xhr.withCredentials = true;
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            xhr.send("action=single_scan&scan_type=" + data.data.type + "&scan_x=" + data.data.x + "&scan_y=" + data.data.y + "&scan_z=" + data.data.z);
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == XMLHttpRequest.DONE) {
+                    if (xhr.responseText.indexOf("Invalid coords and/or scantype.") !== -1) {
+                        alert("Invalid coords or scan type!");
+                    } else if (xhr.responseText.indexOf("planet is too protected") !== -1) {
+                        alert("Too many dists for you!");
+                    } else if (xhr.responseText.indexOf("You can't scan before ticks start") !== -1) {
+                        alert("Scans arent allowed before tick dummy!");
+                    } else {
+                        alert("Success!");
+                    }
+                }
+            };
+        }
+
+        function scanTypeToDisplay(number) {
+            switch (number) {
+                case 1:
+                    return "Planet Scan";
+                case 2:
+                    return "Landing Scan";
+                case 3:
+                    return "Development Scan";
+                case 4:
+                    return "Unit Scan";
+                case 5:
+                    return "News Scan";
+                case 6:
+                    return "Incoming Scan";
+                default:
+                case 7:
+                    return "Jumpgate Scan";
+                case 8:
+                    return "Advanced Unit Scan";
             }
         }
         
