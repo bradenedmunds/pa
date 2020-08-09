@@ -122,6 +122,7 @@
         
         function initAllianceScanRequests() {
             try {
+                $j('#botscans').remove();
                 var xhr = new XMLHttpRequest();
                 xhr.open('GET', 'https://chaozhq.org/scans/requests', true);
                 xhr.withCredentials = true;
@@ -129,7 +130,7 @@
                 xhr.onreadystatechange = function () {
                     if (xhr.readyState == XMLHttpRequest.DONE) {
                         var data = JSON.parse(xhr.responseText);console.log(data);
-                        $j('#tab2').prepend('<div class="container"><div class="header">Bot Scan Requests</div><div class="maintext"><table id="scans"><thead><th>Coords</th><th>Type</th><th>Dists</th><th></th></thead>');
+                        $j('#tab2').prepend('<div class="container" id="botscans"><div class="header">Bot Scan Requests</div><div class="maintext"><table id="scans"><thead><th>Coords</th><th>Type</th><th>Dists</th><th></th></thead>');
                         $j.each(data, function(index, request) {
                             console.log(data[index]);
                             var dists = data[index].dists || 'Unknown';
@@ -137,7 +138,7 @@
                             var y = data[index].y;
                             var z = data[index].z;
                             var type = data[index].scantype;
-                            $j('#scans').append('<tr><td class="center">' + x + ':' + y + ':' + z + '</td><td class="center">' + scanTypeToDisplay(type) + '</td><td>' + dists + '</td><td class="center"><button id="buttonscan' + index + '">Scan</button></td></tr>');
+                            $j('#scans').append('<tr><td class="center">' + x + ':' + y + ':' + z + '</td><td class="center">' + scanTypeToDisplay(type) + '</td><td>' + dists + '</td><td class="center"><input id="buttonscan' + index + '" type="submit" value="Submit"></input></td></tr>');
                             $j('#buttonscan' + index).click({x:x, y:y, z:z, type:type}, attemptScan);
                         });
                         $j('#scans').append('</table></div><div class="footer"</div></div>');
@@ -148,8 +149,9 @@
         }
 
         function attemptScan(data) {
+            var urlRandomizer = Math.floor((Math.random() * 9999999999) + 1000000000);
             var xhr = new XMLHttpRequest();
-            xhr.open('POST', 'https://game.planetarion.com/waves.pl', true);
+            xhr.open('POST', 'https://game.planetarion.com/waves.pl?rn=' + urlRandomizer, true);
             xhr.withCredentials = true;
             xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
             xhr.send("action=single_scan&scan_type=" + data.data.type + "&scan_x=" + data.data.x + "&scan_y=" + data.data.y + "&scan_z=" + data.data.z);
@@ -161,9 +163,17 @@
                         alert("Too many dists for you!");
                     } else if (xhr.responseText.indexOf("You can't scan before ticks start") !== -1) {
                         alert("Scans arent allowed before tick dummy!");
+                    } else if (xhr.responseText.indexOf("The target planet is too well protected against scans, and you need more Wave Amplifiers to successfully scan") !== -1) {
+                        alert("The target planet is too well protected against scans, and you need more Wave Amplifiers to successfully scan.");
                     } else {
-                        alert("Success!");
+                        var startText = "load('', 'show_scan', 'showscan.pl?scan_id=";
+                        var endText = "&inc=1')";
+                        var startIndex = xhr.responseText.indexOf(startText)+startText.length;
+                        var endIndex = xhr.responseText.indexOf(endText);
+                        var scanId = xhr.responseText.substring(startIndex, endIndex);
+                        postScanLinks([scanId]);
                     }
+                    initAllianceScanRequests();
                 }
             };
         }
