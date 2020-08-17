@@ -117,9 +117,25 @@
                     fleets_addLocalTime();
                     //fleets_updateLauchTimes();
                 }
+                if (page == 'alliance_members') {
+                    alliance_member_addCoordButton();
+                }
             }
         }
-        
+
+        function alliance_member_addCoordButton() {
+            $j('#contents_footer').prepend('<input id="coordList" type="submit" value="Get Coord List"></input>');
+            $j('#coordList').click(listMemberCoords);
+        }
+
+        function listMemberCoords() {
+            var coords = "";
+            $j.each($j('table tbody tr td:nth-child(5) a'), function(ind, obj) {
+                coords += $j(obj).text() + " ";
+            });
+            alert(coords);
+        }
+
         function initAllianceScanRequests() {
             try {
                 $j('#botscans').remove();
@@ -138,8 +154,9 @@
                             var y = data[index].y;
                             var z = data[index].z;
                             var type = data[index].scantype;
+                            var id = data[index]._id;
                             $j('#scans').append('<tr><td class="center">' + x + ':' + y + ':' + z + '</td><td class="center">' + scanTypeToDisplay(type) + '</td><td>' + dists + '</td><td class="center"><input id="buttonscan' + index + '" type="submit" value="Submit"></input></td></tr>');
-                            $j('#buttonscan' + index).click({x:x, y:y, z:z, type:type}, attemptScan);
+                            $j('#buttonscan' + index).click({x:x, y:y, z:z, type:type, id:id}, attemptScan);
                         });
                         $j('#scans').append('</table></div><div class="footer"</div></div>');
                     }
@@ -158,7 +175,11 @@
             xhr.onreadystatechange = function () {
                 if (xhr.readyState == XMLHttpRequest.DONE) {
                     if (xhr.responseText.indexOf("Invalid coords and/or scantype.") !== -1) {
-                        alert("Invalid coords or scan type!");
+                        alert("Invalid coords or scan type! Removing scan request!");
+                        var reject = new XMLHttpRequest();
+                        reject.open('POST', 'https://chaozhq.org/parse/reject', true);
+                        reject.setRequestHeader("Content-Type", "application/json");
+                        reject.send(JSON.stringify({id:data.data.id}));
                     } else if (xhr.responseText.indexOf("planet is too protected") !== -1) {
                         alert("Too many dists for you!");
                     } else if (xhr.responseText.indexOf("You can't scan before ticks start") !== -1) {
@@ -171,11 +192,18 @@
                         var startIndex = xhr.responseText.indexOf(startText)+startText.length;
                         var endIndex = xhr.responseText.indexOf(endText);
                         var scanId = xhr.responseText.substring(startIndex, endIndex);
-                        postScanLinks([scanId]);
+                        postScanLinks([scanId], function() {
+                            sleepFor(2000);
+                        });
                     }
                     initAllianceScanRequests();
                 }
             };
+        }
+
+        function sleepFor(sleepDuration) {
+            var now = new Date().getTime();
+            while(new Date().getTime() < now + sleepDuration){ /* do nothing */ }
         }
 
         function scanTypeToDisplay(number) {
@@ -199,14 +227,21 @@
                     return "Advanced Unit Scan";
             }
         }
-        
-        function postScanLinks(scan_ids) {
+
+        function postScanLinks(scan_ids, cb) {
             if(scan_ids.length > 0) {
                 var xhr = new XMLHttpRequest();
                 xhr.open('POST', 'https://chaozhq.org/parse/scans', true);
                 xhr.withCredentials = true;
                 xhr.setRequestHeader('Content-Type', 'application/json');
                 xhr.send(JSON.stringify({scan_ids:scan_ids}));
+                if (cb) {
+                    xhr.onreadystatechange = function () {
+                        if (xhr.readyState == XMLHttpRequest.DONE) {
+                            cb();
+                        }
+                    }
+                }
             }
         }
 
