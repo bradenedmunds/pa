@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Chaoz Script
 // @namespace    http://tampermonkey.net/
-// @version      1.4
+// @version      1.5
 // @description  Chaoz TM Script
 // @author       You
 // @match        https://*.planetarion.com/*
@@ -120,7 +120,15 @@
                 if (page == 'alliance_members') {
                     alliance_member_addCoordButton();
                 }
+                if (page == 'alliance_intel') {
+                    alliance_intel_addCoordButton();
+                }
             }
+        }
+
+        function alliance_intel_addCoordButton() {
+            $j('#contents_footer').prepend('<input id="coordList" type="submit" value="Get Coord List"></input>');
+            $j('#coordList').click(listIntelCoords);
         }
 
         function alliance_member_addCoordButton() {
@@ -131,6 +139,14 @@
         function listMemberCoords() {
             var coords = "";
             $j.each($j('table tbody tr td:nth-child(5) a'), function(ind, obj) {
+                coords += $j(obj).text() + " ";
+            });
+            alert(coords);
+        }
+
+        function listIntelCoords() {
+            var coords = "";
+            $j.each($j('table tbody tr td:nth-child(1) a'), function(ind, obj) {
                 coords += $j(obj).text() + " ";
             });
             alert(coords);
