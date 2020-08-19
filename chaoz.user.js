@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Chaoz Script
 // @namespace    http://tampermonkey.net/
-// @version      1.5
+// @version      1.6
 // @description  Chaoz TM Script
 // @author       You
 // @match        https://*.planetarion.com/*
@@ -137,19 +137,27 @@
         }
 
         function listMemberCoords() {
-            var coords = "";
-            $j.each($j('table tbody tr td:nth-child(5) a'), function(ind, obj) {
-                coords += $j(obj).text() + " ";
-            });
-            alert(coords);
+           coordsList($j('table tbody tr td:nth-child(5) a'));
         }
 
         function listIntelCoords() {
+            coordsList($j('table tbody tr td:nth-child(1) a'), true);
+        }
+
+        function coordsList(selector, skip_first) {
             var coords = "";
-            $j.each($j('table tbody tr td:nth-child(1) a'), function(ind, obj) {
-                coords += $j(obj).text() + " ";
+            $j.each(selector, function(ind, obj) {
+                if (ind == 0 && skip_first) {
+                } else {
+                    coords += $j(obj).text() + " ";
+                }
             });
-            alert(coords);
+            $j('#contents_footer').append('<textarea id="js-copytextarea">' + coords + '</textarea>');
+            $j('#js-copytextarea').focus();
+            $j('#js-copytextarea').select();
+            document.execCommand('copy');
+            $j('#js-copytextarea').remove();
+            alert('Copied coords to clipboard, paste to use.');
         }
 
         function initAllianceScanRequests() {
