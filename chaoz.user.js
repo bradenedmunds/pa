@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Chaoz Script
 // @namespace    http://tampermonkey.net/
-// @version      1.7
+// @version      1.8
 // @description  Chaoz TM Script
 // @author       You
 // @match        https://*.planetarion.com/*
@@ -169,18 +169,17 @@
                 xhr.send();
                 xhr.onreadystatechange = function () {
                     if (xhr.readyState == XMLHttpRequest.DONE) {
-                        var data = JSON.parse(xhr.responseText);console.log(data);
+                        var data = JSON.parse(xhr.responseText);
                         $j('#tab2').prepend('<div class="container" id="botscans"><div class="header">Bot Scan Requests</div><div class="maintext"><table id="scans"><thead><th>Coords</th><th>Type</th><th>Dists</th><th></th></thead>');
                         $j.each(data, function(index, request) {
-                            console.log(data[index]);
                             var dists = data[index].dists || 'Unknown';
                             var x = data[index].x;
                             var y = data[index].y;
                             var z = data[index].z;
                             var type = data[index].scantype;
                             var id = data[index]._id;
-                            $j('#scans').append('<tr><td class="center">' + x + ':' + y + ':' + z + '</td><td class="center">' + scanTypeToDisplay(type) + '</td><td>' + dists + '</td><td class="center"><input id="buttonscan' + index + '" type="submit" value="Submit"></input></td></tr>');
-                            $j('#buttonscan' + index).click({x:x, y:y, z:z, type:type, id:id}, attemptScan);
+                            $j('#scans').append('<tr><td class="center">' + x + ':' + y + ':' + z + '</td><td class="center">' + scanTypeToDisplay(type) + '</td><td>' + dists + '</td><td class="center"><input class="botscan" id="buttonscan' + index + '" type="submit" value="Submit"></input></td></tr>');
+                            $j('#buttonscan' + index).click({x:x, y:y, z:z, type:type, id:id, index: index}, attemptScan);
                         });
                         $j('#scans').append('</table></div><div class="footer"</div></div>');
                     }
