@@ -164,7 +164,7 @@
             try {
                 $j('#botscans').remove();
                 var xhr = new XMLHttpRequest();
-                xhr.open('GET', 'https://thehugecunts.us/scans/requests', true);
+                xhr.open('GET', 'https://thcalliance.us/scans/requests', true);
                 xhr.withCredentials = true;
                 xhr.send();
                 xhr.onreadystatechange = function () {
@@ -254,7 +254,7 @@
         function postScanLinks(scan_ids, cb) {
             if(scan_ids.length > 0) {
                 var xhr = new XMLHttpRequest();
-                xhr.open('POST', 'https://thehugecunts.us/parse/scans', true);
+                xhr.open('POST', 'https://thcalliance.us/parse/scans', true);
                 xhr.withCredentials = true;
                 xhr.setRequestHeader('Content-Type', 'application/json');
                 xhr.send(JSON.stringify({scan_ids:scan_ids}));
