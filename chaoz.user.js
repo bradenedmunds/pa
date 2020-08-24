@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Chaoz Script
 // @namespace    http://tampermonkey.net/
-// @version      1.9
+// @version      1.10
 // @description  Chaoz TM Script
 // @author       You
 // @match        https://*.planetarion.com/*
