@@ -5,6 +5,8 @@
 // @description  Chaoz TM Script
 // @author       You
 // @match        https://*.planetarion.com/*
+// @updateURL    https://github.com/bradenedmunds/pa/raw/master/chaoz.user.js
+// @downloadURL  https://github.com/bradenedmunds/pa/raw/master/chaoz.user.js
 // @grant        none
 // ==/UserScript==
 
